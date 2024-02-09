@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CSV Upload with Filters</title>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+    }
+    .filter-container {
+        display: flex;
+        flex-direction: column;
+        width: 200px; /* Adjust the width as needed */
+        margin-left: 10px; /* Move form to the left side of the screen */
+    }
+    .filter-option {
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 20px;
+        padding: 10px 15px;
+        margin-bottom: 8px; /* Spacing between options */
+        display: flex;
+        align-items: center;
+    }
+    .filter-option input[type="checkbox"] {
+        margin-right: 10px;
+    }
+    .filter-option label {
+        margin: 0;
+    }
+    button {
+        width: 200px;
+        padding: 10px;
+        margin-left: 10px;
+        border-radius: 20px;
+        border: none;
+        background-color: #4CAF50;
+        color: white;
+        cursor: pointer;
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+</style>
+<body>
+<h2>Upload CSV with Specific Filters</h2>
+<form id="csvUploadForm">
+    <input type="file" id="file" name="file"><br>
+    <div>
+        <input type="checkbox" id="jurisdiction" name="fields" value="jurisdiction">
+        <label for="jurisdiction">Jurisdiction</label>
+    </div>
+    <div>
+        <input type="checkbox" id="publication_Year" name="fields" value="Publication Year">
+        <label for="publication_Year">Publication Year</label>
+    </div>
+    <div>
+        <input type="checkbox" id="title" name="fields" value="title">
+        <label for="title">Title</label>
+    </div>
+    <div>
+        <input type="checkbox" id="description" name="fields" value="Abstract">
+        <label for="description">Description</label>
+    </div>
+    <div>
+        <input type="checkbox" id="applicants" name="fields" value="applicants">
+        <label for="applicants">Applicants</label>
+    </div>
+    <div>
+        <input type="checkbox" id="inventors" name="fields" value="inventors">
+        <label for="inventors">Inventors</label>
+    </div>
+    <div>
+        <input type="checkbox" id="cpc" name="fields" value="CPC Classifications">
+        <label for="cpc">CPC</label>
+    </div>
+    <button type="button" onclick="uploadCsvWithFilters()">Upload and Filter</button>
+</form>
+
+<script>
+    function uploadCsvWithFilters() {
+        const formData = new FormData(document.getElementById('csvUploadForm'));
+        // Fetch and append only checked fields
+        document.querySelectorAll('input[name="fields"]:checked').forEach(field => {
+            formData.append('fields', field.value);
+        });
+
+        fetch('/upload-csv', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+                displayData(data); // Call function to display data on the page
+            })
+            .catch(error => console.error('Error:', error));
+    }
+
+    function displayData(data) {
+        // Select the output container. If it doesn't exist, create it.
+        let outputContainer = document.getElementById('outputContainer');
+        if (!outputContainer) {
+            outputContainer = document.createElement('div');
+            outputContainer.id = 'outputContainer';
+            document.body.appendChild(outputContainer);
+        }
+
+        // Clear previous outputs
+        outputContainer.innerHTML = '';
+
+        // Append new data to the output container
+        data.forEach(item => {
+            const paragraph = document.createElement('p');
+            paragraph.textContent = JSON.stringify(item); // Convert item to string for display
+            outputContainer.appendChild(paragraph);
+        });
+    }
+</script>
+</body>
+</html>
