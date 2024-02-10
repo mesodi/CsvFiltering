@@ -1,14 +1,14 @@
 package es.wacoco.csvfiltering.model;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class Job {
     String jobID;
-    LocalDateTime dateCreated;
+    String dateCreated;
+    String status;
 
-    Status status;
-
-    public Job(String jobID, LocalDateTime dateCreated, Status status) {
+    public Job(String jobID, String dateCreated, String status) {
         this.jobID = jobID;
         this.dateCreated = dateCreated;
         this.status = status;
@@ -18,11 +18,11 @@ public class Job {
         return jobID;
     }
 
-    public LocalDateTime getDateCreated() {
+    public String getDateCreated() {
         return dateCreated;
     }
 
-    public Status getStatus() {
+    public String getStatus() {
         return status;
     }
 
@@ -30,15 +30,18 @@ public class Job {
         this.jobID = jobID;
     }
 
-    public void setDateCreated(LocalDateTime dateCreated) {
+    public void setDateCreated(String dateCreated) {
         this.dateCreated = dateCreated;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(String status) {
         this.status = status;
     }
     //enum for jobs status
     public enum Status{
+
         PROCESSING,DONE,MANUAL
     }
+
+
 }

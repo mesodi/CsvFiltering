@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 @Getter
 @AllArgsConstructor
-public class FieldData {
+public class DataPoints {
     private String jurisdiction;
     private int publication_Year;
     private int application_Number;
@@ -17,7 +17,8 @@ public class FieldData {
     private String inventors;
     private String cpc;
     private String owner;
-    public FieldData() {
+    public DataPoints() {
+
     }
 
 }
