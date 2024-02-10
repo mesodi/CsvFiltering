@@ -44,11 +44,34 @@
     button:hover {
         background-color: #45a049;
     }
+    .job-details {
+        margin: 10px 0;
+        padding: 10px;
+        background-color: #f3f3f3;
+        border-radius: 5px;
+        border: 1px solid #ddd;
+    }
+
+    .toggle-button {
+        margin-top: 10px;
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #4CAF50;
+        background-color: #4CAF50;
+        color: white;
+        cursor: pointer;
+    }
+
+    .toggle-button:hover {
+        background-color: #45a049;
+    }
 </style>
 <body>
 <h2>Upload CSV with Specific Filters</h2>
 <form id="csvUploadForm">
     <input type="file" id="file" name="file"><br>
+
     <div>
         <input type="checkbox" id="jurisdiction" name="fields" value="jurisdiction">
         <label for="jurisdiction">Jurisdiction</label>
@@ -78,46 +101,98 @@
         <label for="cpc">CPC</label>
     </div>
     <button type="button" onclick="uploadCsvWithFilters()">Upload and Filter</button>
+
 </form>
+<div id="jobDetails"></div>
+<div id="filteredData"></div>
 
 <script>
     function uploadCsvWithFilters() {
         const formData = new FormData(document.getElementById('csvUploadForm'));
-        // Fetch and append only checked fields
         document.querySelectorAll('input[name="fields"]:checked').forEach(field => {
             formData.append('fields', field.value);
         });
+
+        // Create a temporary job entry to show "PROCESS" status immediately
+        const tempJobId = 'Creating Job ID....' // Create a temporary unique ID
+        createJobEntry({ jobID: tempJobId, status: 'PROCESS..' });
 
         fetch('/upload-csv', {
             method: 'POST',
             body: formData
         })
             .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                displayData(data); // Call function to display data on the page
+            .then(job => {
+                // Remove temporary job entry
+                const tempJobContainer = document.querySelector(`div[data-job-id="${tempJobId}"]`);
+                if (tempJobContainer) {
+                    tempJobContainer.remove();
+                }
+
+                // Create the actual job entry with returned details from the backend
+                createJobEntry(job);
             })
-            .catch(error => console.error('Error:', error));
+            .catch(error => {
+                console.error('Error:', error);
+                displayError();
+            });
     }
 
-    function displayData(data) {
-        // Select the output container. If it doesn't exist, create it.
-        let outputContainer = document.getElementById('outputContainer');
-        if (!outputContainer) {
-            outputContainer = document.createElement('div');
-            outputContainer.id = 'outputContainer';
-            document.body.appendChild(outputContainer);
+    function createJobEntry(job) {
+        let jobEntriesContainer = document.getElementById('jobEntriesContainer');
+        if (!jobEntriesContainer) {
+            jobEntriesContainer = document.createElement('div');
+            jobEntriesContainer.id = 'jobEntriesContainer';
+            const form = document.getElementById('csvUploadForm');
+            form.parentNode.insertBefore(jobEntriesContainer, form.nextSibling);
         }
 
-        // Clear previous outputs
-        outputContainer.innerHTML = '';
+        const jobContainer = document.createElement('div');
+        jobContainer.setAttribute('data-job-id', job.jobID);
+        jobContainer.className = 'job-container';
+        jobContainer.innerHTML = `
+        <div class="job-details">
+            <strong>Job ID:</strong> ${job.jobID}<br>
+            <strong>Date Created:</strong> ${new Date().toLocaleString()}<br>
+            <strong>Status:</strong> ${job.status}
+        </div>
+    `;
 
-        // Append new data to the output container
-        data.forEach(item => {
-            const paragraph = document.createElement('p');
-            paragraph.textContent = JSON.stringify(item); // Convert item to string for display
-            outputContainer.appendChild(paragraph);
-        });
+        if (job.filteredData) {
+            const toggleButton = document.createElement('button');
+            toggleButton.className = 'toggle-button';
+            toggleButton.textContent = 'Show More';
+            toggleButton.addEventListener('click', function() {
+                toggleFilteredDataDisplay(job.filteredData, jobContainer, this);
+            });
+            jobContainer.appendChild(toggleButton);
+        }
+
+        jobEntriesContainer.prepend(jobContainer);
+    }
+
+    function toggleFilteredDataDisplay(filteredData, jobContainer, toggleButton) {
+        const isDataVisible = toggleButton.textContent === 'Show Less';
+        if (!isDataVisible) {
+            const dataContainer = document.createElement('div');
+            filteredData.forEach(data => {
+                const dataParagraph = document.createElement('pre');
+                dataParagraph.textContent = JSON.stringify(data, null, 2);
+                dataContainer.appendChild(dataParagraph);
+            });
+            jobContainer.appendChild(dataContainer);
+            toggleButton.textContent = 'Show Less';
+        } else {
+            jobContainer.removeChild(jobContainer.lastChild);
+            toggleButton.textContent = 'Show More';
+        }
+    }
+
+    function displayError() {
+        const errorMessage = document.createElement('p');
+        errorMessage.textContent = 'Error processing the file.';
+        const form = document.getElementById('csvUploadForm');
+        form.parentNode.insertBefore(errorMessage, form.nextSibling);
     }
 </script>
 </body>

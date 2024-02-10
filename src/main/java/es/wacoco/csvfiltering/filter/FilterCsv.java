@@ -1,5 +1,6 @@
 package es.wacoco.csvfiltering.filter;
 
+import es.wacoco.csvfiltering.model.Job;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -13,34 +14,48 @@ import java.util.*;
 
 @Slf4j
 @Service
+
 public class FilterCsv {
 
-    public List<Map<String, String>> filterCsvFields(MultipartFile file, List<String> userFields) {
-        List<Map<String, String>> filteredResults = new ArrayList<>();
-        try (CSVParser parser = new CSVParser(new InputStreamReader(file.getInputStream()),
-                CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
+    public Job filterCsvFields(MultipartFile file, List<String> userFields) {
+        Job job = new Job();
+        job.setStatus(Job.JobStatus.PROCESS);
 
-            for (CSVRecord record : parser) {
-                Map<String, String> dataMap = new HashMap<>();
-                if (userFields.isEmpty()) {
+        try {
 
-                    dataMap.putAll(record.toMap());
-                } else {
+            Thread.sleep(5000);
 
-                    for (String field : userFields) {
-                        if (record.isMapped(field) && record.get(field) != null) {
-                            dataMap.put(field, record.get(field));
+            try (CSVParser parser = new CSVParser(new InputStreamReader(file.getInputStream()),
+                    CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim())) {
+                List<Map<String, String>> filteredResults = new ArrayList<>();
+                for (CSVRecord record : parser) {
+                    Map<String, String> dataMap = new HashMap<>();
+                    if (userFields.isEmpty()) {
+                        dataMap.putAll(record.toMap());
+                    } else {
+                        for (String field : userFields) {
+                            if (record.isMapped(field) && record.get(field) != null) {
+                                dataMap.put(field, record.get(field));
+                            }
                         }
                     }
+                    if (!dataMap.isEmpty()) {
+                        filteredResults.add(dataMap);
+                    }
                 }
-                if (!dataMap.isEmpty()) {
-                    filteredResults.add(dataMap);
-                }
+                job.setFilteredData(filteredResults);
             }
+            job.setStatus(Job.JobStatus.DONE);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            job.setStatus(Job.JobStatus.MANUAL);
         } catch (Exception e) {
             log.error("Error processing CSV file", e);
+            job.setStatus(Job.JobStatus.MANUAL);
         }
-        return filteredResults;
+        return job;
     }
+
+
 
 }
