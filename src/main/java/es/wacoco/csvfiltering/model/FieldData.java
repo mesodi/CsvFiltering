@@ -1,4 +1,4 @@
-package es.wacoco.csvfiltering.Model;
+package es.wacoco.csvfiltering.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
