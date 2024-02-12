@@ -8,6 +8,6 @@ public class JobService {
     ArrayList<Job> database = new ArrayList<>();
     public void newJob(Job job) {
         database.add(job);
-        
+        System.out.println("asas");
     }
 }
