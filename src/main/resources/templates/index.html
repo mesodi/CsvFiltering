@@ -3,45 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <title>CSV Upload and Filter</title>
-</head>
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 20px;
-        display: flex;
-        flex-direction: column;
-    }
-    .filter-container {
-        display: flex;
-        flex-direction: column;
-        margin-top: 20px;
-    }
-    .filter-option {
-        margin-bottom: 10px;
-    }
-    button {
-        margin-top: 20px;
-        padding: 10px 20px;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    button:hover {
-        background-color: #45a049;
-    }
-</style>
-<body>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        .filter-container {
+            display: flex;
+            flex-direction: column;
+            margin-top: 20px;
+        }
+        .filter-option {
+            margin-bottom: 10px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #jobDetails {
+            margin-top: 20px;
+        }
+        .job-entry {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
 
+        .job-entry p {
+            margin: 5px 0;
+            color: #333;
+        }
+
+        .job-entry span {
+            font-weight: bold;
+        }
+
+        .filtered-data {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
 <h2>Upload and Filter CSV File</h2>
 <form id="csvUploadForm" enctype="multipart/form-data">
     <input type="file" id="file" name="file" required><br><br>
-
     <div class="filter-container">
+        <!-- Filter options based on your CSV fields -->
+        <!-- Updated field names according to your requirements -->
         <div class="filter-option">
-            <input type="checkbox" id="applicationNumber" name="fields" value="Application number">
+            <input type="checkbox" id="applicationNumber" name="fields" value="Application Number">
             <label for="applicationNumber">Application Number</label>
         </div>
         <div class="filter-option">
@@ -49,7 +92,7 @@
             <label for="title">Title</label>
         </div>
         <div class="filter-option">
-            <input type="checkbox" id="publicationDate" name="fields" value="Publication date">
+            <input type="checkbox" id="publicationDate" name="fields" value="Publication Date">
             <label for="publicationDate">Publication Date</label>
         </div>
         <div class="filter-option">
@@ -65,30 +108,55 @@
             <label for="inventors">Inventors</label>
         </div>
     </div>
-
     <button type="submit">Upload and Filter</button>
 </form>
 
-<div id="filteredData"></div>
+<div id="jobDetails"></div> <!-- Container for job details -->
 
 <script>
     document.getElementById('csvUploadForm').onsubmit = function(event) {
         event.preventDefault();
-
         const formData = new FormData(this);
+        const jobDetailsElement = document.getElementById('jobDetails');
+
         fetch('/upload-csv', {
             method: 'POST',
             body: formData,
         })
             .then(response => response.json())
-            .then(data => {
-                document.getElementById('filteredData').textContent = JSON.stringify(data, null, 2);
+            .then(job => {
+                // Create new job element
+                const jobElement = document.createElement('div');
+                jobElement.innerHTML = `
+            <div class="job-entry">
+                <p>Job ID: <span>${job.jobID}</span></p>
+                <p>Date Created: <span>${job.dateCreated}</span></p>
+                <p>Status: <span>${job.currentStatus}</span></p>
+                <button onclick="toggleDetails(this)">Show More</button>
+                <div class="filtered-data" style="display: none;">
+                    ${JSON.stringify(job.filteredData, null, 2)}
+                </div>
+            </div>
+        `;
+                // Insert new job at the top
+                jobDetailsElement.insertBefore(jobElement, jobDetailsElement.firstChild);
             })
             .catch(error => {
-                console.error('Error uploading and filtering CSV:', error);
+                console.error('Error:', error);
+                jobDetailsElement.textContent = 'Error processing the file.';
             });
     };
-</script>
 
+    function toggleDetails(button) {
+        const filteredDataElement = button.nextElementSibling;
+        if (filteredDataElement.style.display === 'none') {
+            filteredDataElement.style.display = 'block';
+            button.textContent = 'Show Less';
+        } else {
+            filteredDataElement.style.display = 'none';
+            button.textContent = 'Show More';
+        }
+    }
+</script>
 </body>
 </html>

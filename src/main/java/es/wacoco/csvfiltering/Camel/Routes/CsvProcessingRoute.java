@@ -8,6 +8,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import java.util.Map;
 @Component
 public class CsvProcessingRoute extends RouteBuilder {
     private final JobService jobService;
+
     public CsvProcessingRoute(JobService jobService) {
         this.jobService = jobService;
     }
@@ -25,16 +27,22 @@ public class CsvProcessingRoute extends RouteBuilder {
                 .process(exchange -> {
                     LocalDateTime now = LocalDateTime.now();
                     String jobId = jobService.createJobID(now);
-                    Job job = new Job(jobId, now, Job.Status.PROCESSING, null);
-                    exchange.getIn().setHeader("job", job);
+                    Job job = new Job(jobId, now, Job.Status.PROCESSING, new ArrayList<>());
+                    jobService.newJob(job);
+                    //save id for later
+                    exchange.getIn().setHeader("jobId", jobId);
                 })
                 .process(new FilterCsvProcessor())
                 .process(exchange -> {
-                    Job job = exchange.getIn().getHeader("job", Job.class);
+                    //get the id
+                    String jobId = exchange.getIn().getHeader("jobId", String.class);
+                    Job job = jobService.getJob(jobId);
                     @SuppressWarnings("unchecked")
                     List<Map<String, String>> filteredResults = exchange.getIn().getBody(List.class);
                     job.setFilteredData(filteredResults);
                     job.setCurrentStatus(Job.Status.DONE);
+
+                    jobService.updateJob(job);
                     exchange.getIn().setBody(job);
                 })
                 .to("log:filteredResults?showBody=true&showHeaders=true");

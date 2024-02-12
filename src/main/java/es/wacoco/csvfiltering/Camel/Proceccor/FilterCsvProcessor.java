@@ -17,6 +17,7 @@ public class FilterCsvProcessor implements Processor {
     @Override
     public void process(Exchange exchange){
         MultipartFile file = exchange.getIn().getBody(MultipartFile.class);
+        @SuppressWarnings("unchecked")
         List<String> userFields = exchange.getIn().getHeader("userFields", List.class);
 
         List<Map<String, String>> filteredResults = null;

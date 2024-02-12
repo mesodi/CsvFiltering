@@ -10,7 +10,7 @@ import lombok.Setter;
 public class DataPoints {
     private int application_Number;
     private String title;
-    private String description;
+    private String Abstract;
     private String jurisdiction;
     private String applicants;
     private String inventors;
