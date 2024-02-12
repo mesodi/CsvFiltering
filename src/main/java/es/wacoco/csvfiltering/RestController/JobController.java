@@ -1,7 +1,6 @@
 package es.wacoco.csvfiltering.RestController;
 
 import org.apache.camel.ProducerTemplate;
-
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
@@ -19,8 +18,9 @@ public class JobController {
 
 
     @PostMapping("/upload-csv")
-    public Object uploadCsv(@RequestParam("file") MultipartFile file,
-                            @RequestParam("fields") List<String> fields) {
+    public Object uploadCsv(
+           @RequestParam("file") MultipartFile file,@RequestParam("fields") List<String> fields) {
+
         return template.requestBodyAndHeader("direct:processCsv", file, "userFields", fields);
     }
 }

@@ -1,47 +1,31 @@
 package es.wacoco.csvfiltering.model;
 
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+
+
+@Setter
+@Getter
+@AllArgsConstructor
 public class Job {
 
-    String jobID;
-    String dateCreated;
-    String currentStatus;
+    private String jobID;
+    private LocalDateTime dateCreated;
+    private Status currentStatus;
+    private List<Map<String, String>> filteredData;
 
-    public String getJobID() {
-        return jobID;
+    public Job() {
     }
 
-    public void setJobID(String jobID) {
-        this.jobID = jobID;
-    }
-
-    public String getDateCreated() {
-        return dateCreated;
-    }
-
-    public void setDateCreated(String dateCreated) {
-        this.dateCreated = dateCreated;
-    }
-
-    public String getCurrentStatus() {
-        return currentStatus;
-    }
-
-    public void setCurrentStatus(String currentStatus) {
-        this.currentStatus = currentStatus;
-    }
-
-
-
-    public Job(String jobID, String dateCreated, String currentStatus) {
-        this.jobID = jobID;
-        this.dateCreated = dateCreated;
-        this.currentStatus = currentStatus;
-    }
-
-    enum Status {
+    public enum Status {
         PROCESSING,
         MANUAL,
         DONE
     }
-
 }

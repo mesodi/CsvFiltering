@@ -14,8 +14,6 @@ import java.util.*;
 
 @Slf4j
 public class FilterCsvProcessor implements Processor {
-
-
     @Override
     public void process(Exchange exchange){
         MultipartFile file = exchange.getIn().getBody(MultipartFile.class);
@@ -29,7 +27,6 @@ public class FilterCsvProcessor implements Processor {
         }
         exchange.getIn().setBody(filteredResults);
     }
-
     private List<Map<String, String>> filterCsvFields(MultipartFile file, List<String> userFields) throws Exception {
         List<Map<String, String>> filteredResults = new ArrayList<>();
         try (CSVParser parser = new CSVParser(new InputStreamReader(file.getInputStream()),
