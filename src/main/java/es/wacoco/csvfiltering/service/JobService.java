@@ -16,7 +16,7 @@ public class JobService {
         return null;
     }
 
-    public String createJobID(String date, JobService jobService) {
+    public String createJobID(String date) {
         Random random = new Random();
 
         Boolean idTaken;
@@ -28,7 +28,7 @@ public class JobService {
             idBuilder.append(date.replace("-", "") + "-" + Integer.toString(uniqueNum));
             newID = idBuilder.toString();
             idTaken = false;
-            for (Job job : jobService.database) {
+            for (Job job : database) {
                 if (job.getJobID().equals(idBuilder)) {
                     idTaken = true;
                     break;
@@ -40,4 +40,4 @@ public class JobService {
         return newID;
     }
 }
-}
+

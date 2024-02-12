@@ -29,7 +29,7 @@ public class JobController {
         try {
             InputStream inputStream = file.getInputStream();
             producerTemplate.sendBody("direct:processCsv", inputStream);
-            jobService.newJob(new Job("QRY-20240204-EFG655", dtf.format(timeNow), "Processing"));
+            jobService.newJob(new Job(jobService.createJobID(dtf.format(timeNow)), dtf.format(timeNow), "Processing"));
             return new ResponseEntity<>(HttpStatus.CREATED);
         } catch (IOException e) {
             return new ResponseEntity<>("Problems processing the file", HttpStatus.BAD_REQUEST);
