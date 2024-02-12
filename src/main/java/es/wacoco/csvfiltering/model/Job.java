@@ -38,5 +38,4 @@ public class Job {
         this.currentStatus = currentStatus;
     }
 
-
 }

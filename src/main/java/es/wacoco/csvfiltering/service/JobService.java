@@ -8,6 +8,9 @@ public class JobService {
     ArrayList<Job> database = new ArrayList<>();
     public void newJob(Job job) {
         database.add(job);
-        
+    }
+
+    public String createJobId(String date) {
+        return null;
     }
 }
