@@ -18,8 +18,6 @@ import java.util.*;
 public class FilterCsv {
 
     public Job filterCsvFields(MultipartFile file, List<String> userFields) {
-        Job job = new Job();
-        job.setStatus(Job.JobStatus.PROCESS);
 
         try {
 
