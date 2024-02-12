@@ -38,4 +38,10 @@ public class Job {
         this.currentStatus = currentStatus;
     }
 
+    enum Status {
+        PROCESSING,
+        MANUAL,
+        DONE
+    }
+
 }
