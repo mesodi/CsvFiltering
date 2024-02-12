@@ -76,7 +76,7 @@
         event.preventDefault();
 
         const formData = new FormData(this);
-        fetch('/upload-csv', { // Update this endpoint to match your backend
+        fetch('/upload-csv', {
             method: 'POST',
             body: formData,
         })

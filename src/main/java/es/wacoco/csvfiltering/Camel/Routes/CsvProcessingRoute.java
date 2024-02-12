@@ -28,9 +28,8 @@ public class CsvProcessingRoute extends RouteBuilder {
                     Job job = new Job(jobId, now, Job.Status.PROCESSING, null);
                     exchange.getIn().setHeader("job", job);
                 })
-                .process(new FilterCsvProcessor()) // Assumes this processor filters CSV and sets body to filtered results
+                .process(new FilterCsvProcessor())
                 .process(exchange -> {
-                    // Update job with filtered results and status DONE
                     Job job = exchange.getIn().getHeader("job", Job.class);
                     List<Map<String, String>> filteredResults = exchange.getIn().getBody(List.class);
                     job.setFilteredData(filteredResults);
