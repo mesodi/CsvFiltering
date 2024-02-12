@@ -31,10 +31,11 @@ public class CsvProcessingRoute extends RouteBuilder {
                 .process(new FilterCsvProcessor())
                 .process(exchange -> {
                     Job job = exchange.getIn().getHeader("job", Job.class);
+                    @SuppressWarnings("unchecked")
                     List<Map<String, String>> filteredResults = exchange.getIn().getBody(List.class);
                     job.setFilteredData(filteredResults);
                     job.setCurrentStatus(Job.Status.DONE);
-                    exchange.getIn().setBody(job); // Set job as the body if you want to use it downstream
+                    exchange.getIn().setBody(job);
                 })
                 .to("log:filteredResults?showBody=true&showHeaders=true");
     }
