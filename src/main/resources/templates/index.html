@@ -2,198 +2,93 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CSV Upload with Filters</title>
+    <title>CSV Upload and Filter</title>
 </head>
 <style>
     body {
         font-family: Arial, sans-serif;
         margin: 0;
-        padding: 0;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
     }
     .filter-container {
         display: flex;
         flex-direction: column;
-        width: 200px; /* Adjust the width as needed */
-        margin-left: 10px; /* Move form to the left side of the screen */
+        margin-top: 20px;
     }
     .filter-option {
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 20px;
-        padding: 10px 15px;
-        margin-bottom: 8px; /* Spacing between options */
-        display: flex;
-        align-items: center;
-    }
-    .filter-option input[type="checkbox"] {
-        margin-right: 10px;
-    }
-    .filter-option label {
-        margin: 0;
+        margin-bottom: 10px;
     }
     button {
-        width: 200px;
-        padding: 10px;
-        margin-left: 10px;
-        border-radius: 20px;
-        border: none;
+        margin-top: 20px;
+        padding: 10px 20px;
         background-color: #4CAF50;
         color: white;
+        border: none;
+        border-radius: 5px;
         cursor: pointer;
     }
     button:hover {
         background-color: #45a049;
     }
-    .job-details {
-        margin: 10px 0;
-        padding: 10px;
-        background-color: #f3f3f3;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-    }
-
-    .toggle-button {
-        margin-top: 10px;
-        width: 100%;
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #4CAF50;
-        background-color: #4CAF50;
-        color: white;
-        cursor: pointer;
-    }
-
-    .toggle-button:hover {
-        background-color: #45a049;
-    }
 </style>
 <body>
-<h2>Upload CSV with Specific Filters</h2>
-<form id="csvUploadForm">
-    <input type="file" id="file" name="file"><br>
 
-    <div>
-        <input type="checkbox" id="jurisdiction" name="fields" value="jurisdiction">
-        <label for="jurisdiction">Jurisdiction</label>
-    </div>
-    <div>
-        <input type="checkbox" id="publication_Year" name="fields" value="Publication Year">
-        <label for="publication_Year">Publication Year</label>
-    </div>
-    <div>
-        <input type="checkbox" id="title" name="fields" value="title">
-        <label for="title">Title</label>
-    </div>
-    <div>
-        <input type="checkbox" id="description" name="fields" value="Abstract">
-        <label for="description">Description</label>
-    </div>
-    <div>
-        <input type="checkbox" id="applicants" name="fields" value="applicants">
-        <label for="applicants">Applicants</label>
-    </div>
-    <div>
-        <input type="checkbox" id="inventors" name="fields" value="inventors">
-        <label for="inventors">Inventors</label>
-    </div>
-    <div>
-        <input type="checkbox" id="cpc" name="fields" value="CPC Classifications">
-        <label for="cpc">CPC</label>
-    </div>
-    <button type="button" onclick="uploadCsvWithFilters()">Upload and Filter</button>
+<h2>Upload and Filter CSV File</h2>
+<form id="csvUploadForm" enctype="multipart/form-data">
+    <input type="file" id="file" name="file" required><br><br>
 
+    <div class="filter-container">
+        <div class="filter-option">
+            <input type="checkbox" id="applicationNumber" name="fields" value="Application number">
+            <label for="applicationNumber">Application Number</label>
+        </div>
+        <div class="filter-option">
+            <input type="checkbox" id="title" name="fields" value="Title">
+            <label for="title">Title</label>
+        </div>
+        <div class="filter-option">
+            <input type="checkbox" id="publicationDate" name="fields" value="Publication date">
+            <label for="publicationDate">Publication Date</label>
+        </div>
+        <div class="filter-option">
+            <input type="checkbox" id="abstract" name="fields" value="Abstract">
+            <label for="abstract">Abstract</label>
+        </div>
+        <div class="filter-option">
+            <input type="checkbox" id="applicants" name="fields" value="Applicants">
+            <label for="applicants">Applicants</label>
+        </div>
+        <div class="filter-option">
+            <input type="checkbox" id="inventors" name="fields" value="Inventors">
+            <label for="inventors">Inventors</label>
+        </div>
+    </div>
+
+    <button type="submit">Upload and Filter</button>
 </form>
-<div id="jobDetails"></div>
+
 <div id="filteredData"></div>
 
 <script>
-    function uploadCsvWithFilters() {
-        const formData = new FormData(document.getElementById('csvUploadForm'));
-        document.querySelectorAll('input[name="fields"]:checked').forEach(field => {
-            formData.append('fields', field.value);
-        });
+    document.getElementById('csvUploadForm').onsubmit = function(event) {
+        event.preventDefault();
 
-        // Create a temporary job entry to show "PROCESS" status immediately
-        const tempJobId = 'Creating Job ID....' // Create a temporary unique ID
-        createJobEntry({ jobID: tempJobId, status: 'PROCESS..' });
-
-        fetch('/upload-csv', {
+        const formData = new FormData(this);
+        fetch('/upload-csv', { // Update this endpoint to match your backend
             method: 'POST',
-            body: formData
+            body: formData,
         })
             .then(response => response.json())
-            .then(job => {
-                // Remove temporary job entry
-                const tempJobContainer = document.querySelector(`div[data-job-id="${tempJobId}"]`);
-                if (tempJobContainer) {
-                    tempJobContainer.remove();
-                }
-
-                // Create the actual job entry with returned details from the backend
-                createJobEntry(job);
+            .then(data => {
+                document.getElementById('filteredData').textContent = JSON.stringify(data, null, 2);
             })
             .catch(error => {
-                console.error('Error:', error);
-                displayError();
+                console.error('Error uploading and filtering CSV:', error);
             });
-    }
-
-    function createJobEntry(job) {
-        let jobEntriesContainer = document.getElementById('jobEntriesContainer');
-        if (!jobEntriesContainer) {
-            jobEntriesContainer = document.createElement('div');
-            jobEntriesContainer.id = 'jobEntriesContainer';
-            const form = document.getElementById('csvUploadForm');
-            form.parentNode.insertBefore(jobEntriesContainer, form.nextSibling);
-        }
-
-        const jobContainer = document.createElement('div');
-        jobContainer.setAttribute('data-job-id', job.jobID);
-        jobContainer.className = 'job-container';
-        jobContainer.innerHTML = `
-        <div class="job-details">
-            <strong>Job ID:</strong> ${job.jobID}<br>
-            <strong>Date Created:</strong> ${new Date().toLocaleString()}<br>
-            <strong>Status:</strong> ${job.status}
-        </div>
-    `;
-
-        if (job.filteredData) {
-            const toggleButton = document.createElement('button');
-            toggleButton.className = 'toggle-button';
-            toggleButton.textContent = 'Show More';
-            toggleButton.addEventListener('click', function() {
-                toggleFilteredDataDisplay(job.filteredData, jobContainer, this);
-            });
-            jobContainer.appendChild(toggleButton);
-        }
-
-        jobEntriesContainer.prepend(jobContainer);
-    }
-
-    function toggleFilteredDataDisplay(filteredData, jobContainer, toggleButton) {
-        const isDataVisible = toggleButton.textContent === 'Show Less';
-        if (!isDataVisible) {
-            const dataContainer = document.createElement('div');
-            filteredData.forEach(data => {
-                const dataParagraph = document.createElement('pre');
-                dataParagraph.textContent = JSON.stringify(data, null, 2);
-                dataContainer.appendChild(dataParagraph);
-            });
-            jobContainer.appendChild(dataContainer);
-            toggleButton.textContent = 'Show Less';
-        } else {
-            jobContainer.removeChild(jobContainer.lastChild);
-            toggleButton.textContent = 'Show More';
-        }
-    }
-
-    function displayError() {
-        const errorMessage = document.createElement('p');
-        errorMessage.textContent = 'Error processing the file.';
-        const form = document.getElementById('csvUploadForm');
-        form.parentNode.insertBefore(errorMessage, form.nextSibling);
-    }
+    };
 </script>
+
 </body>
 </html>

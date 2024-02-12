@@ -8,15 +8,13 @@ import lombok.Setter;
 @Getter
 @AllArgsConstructor
 public class DataPoints {
-    private String jurisdiction;
-    private int publication_Year;
     private int application_Number;
     private String title;
     private String description;
+    private String jurisdiction;
     private String applicants;
     private String inventors;
-    private String cpc;
-    private String owner;
+    private int publication_Date;
     public DataPoints() {
 
     }
