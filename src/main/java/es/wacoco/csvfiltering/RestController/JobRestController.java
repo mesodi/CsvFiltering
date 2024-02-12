@@ -9,11 +9,11 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.*;
 
 @org.springframework.web.bind.annotation.RestController
-public class JobController {
+public class JobRestController {
 
     private final ProducerTemplate template;
 
-    public JobController(ProducerTemplate template) {
+    public JobRestController(ProducerTemplate template) {
         this.template = template;
     }
 
