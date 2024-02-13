@@ -5,14 +5,12 @@ phases:
     commands:
       - echo Logging in to DockerHub
       - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
-      - REPOSITORY_URI=merum/csvfiltering:latest
 
   build:
     commands:
       - echo Building Docker image
-      - docker build -t merum/csvfiltering:tag .
-      - docker push docker.io/merum/csvfiltering:tag
-      - docker push $REPOSITORY_URI --all-tags
+      - docker build -t merum/csvfiltering:latest .
+      - docker push merum/csvfiltering:latest
   post_build:
     commands:
       - echo Build completed on `date`
