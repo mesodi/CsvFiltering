@@ -17,8 +17,8 @@ cd /home/ec2-user/
     docker stop CsvFiltering
     docker rm CsvFiltering
 mvn package .
-docker build -t johnnie3000/csvfiltering:tagname .
+docker build -t bassam123/csvfiltering:tagname .
 
 
-docker run -d --name csvfiltering -p 80:8080 johnnie3000/csvfiltering:tagname
+docker run -d --name csvfiltering -p 80:8080 bassam123/csvfiltering:tagname
 
