@@ -12,8 +12,8 @@ phases:
     commands:
       - mvn clean install
       - echo Building Docker image
-      - docker build -t johnnie3000/csvfiltering:tagname .
-      - docker push docker.io/johnnie3000/csvfiltering:tagname
+      - docker build -t bassam123/csvfiltering:tagname .
+      - docker push docker.io/bassam123/csvfiltering:tagname
       - docker push $REPOSITORY_URI --all-tags
 
   post_build:
