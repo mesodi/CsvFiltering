@@ -3,14 +3,27 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - echo Logging in to DockerHub
-      - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+      - echo Logging in to Amazon ECR
+      - $(aws ecr get-login --no-include-email --region $AWS_DEFAULT_REGION)
+      - REPOSITORY_URI=<din-ecr-repository-uri>
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
 
   build:
     commands:
-      - echo Building Docker image
-      - docker build -t merum/csvfiltering:latest .
-      - docker push merum/csvfiltering:latest
+      - echo Building the Docker image...
+      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
+      - echo Running tests...
+      - docker run $REPOSITORY_URI:$IMAGE_TAG <ditt-test-kommando>
+
   post_build:
     commands:
-      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Writing image definitions file...
+      - printf '[{"name":"<din-container-definition-namn>","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
+
+artifacts:
+  files:
+    - appspec.yml
+    - imagedefinitions.json
+    - scripts/**
