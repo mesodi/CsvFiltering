@@ -1,0 +1,16 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to DockerHub
+      - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+
+  build:
+    commands:
+      - echo Building Docker image
+      - docker build -t merum/csvfiltering:latest .
+      - docker push merum/csvfiltering:latest
+  post_build:
+    commands:
+      - echo Build completed on `date`
