@@ -146,7 +146,38 @@
                 jobDetailsElement.textContent = 'Error processing the file.';
             });
     };
+    // Function to fetch all jobs and display them in the #jobDetails div
+    function fetchAndDisplayAllJobs() {
+        fetch('/all')
+            .then(response => response.json())
+            .then(jobs => {
+                const jobDetailsElement = document.getElementById('jobDetails');
+                jobs.forEach(job => {
+                    const jobElement = document.createElement('div');
+                    jobElement.classList.add("job-entry"); // Ensure this class matches your CSS for styling
+                    jobElement.innerHTML = `
+                    <p>Job ID: <span>${job.jobID}</span></p>
+                    <p>Date Created: <span>${job.dateCreated}</span></p> <!-- Adjust according to your date formatting -->
+                    <p>Status: <span>${job.currentStatus}</span></p>
+                    <button onclick="toggleDetails(this)">Show More</button>
+                    <div class="filtered-data" style="display: none;">
+                        ${JSON.stringify(job.filteredData, null, 2)}
+                    </div>
+                `;
+                    // Append each job to the jobDetails container
+                    jobDetailsElement.appendChild(jobElement);
+                });
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                jobDetailsElement.textContent = 'Error fetching job details.';
+            });
+    }
 
+    // Call fetchAndDisplayAllJobs on page load
+    document.addEventListener('DOMContentLoaded', fetchAndDisplayAllJobs);
+
+    // Function to toggle the display of filtered data for each job
     function toggleDetails(button) {
         const filteredDataElement = button.nextElementSibling;
         if (filteredDataElement.style.display === 'none') {
