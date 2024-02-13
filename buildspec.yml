@@ -6,7 +6,7 @@ phases:
 
       - echo Logging in to DockerHub
       - aws --version
-      - docker login -u $DOCKERHUB_USERNAME -p $DOCKERHUB_PASSWORD
+      - docker login -u bassam123 -p docker123@@
       - REPOSITORY_URI=johnnie3000/csvfiltering:tagname
   build:
     commands:
