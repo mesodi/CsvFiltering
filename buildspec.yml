@@ -7,7 +7,7 @@ phases:
       - echo Logging in to DockerHub
       - aws --version
       - docker login -u bassam123 -p docker123@@
-      - REPOSITORY_URI=johnnie3000/csvfiltering:tagname
+      - REPOSITORY_URI=bassam123/csvfiltering:tagname
   build:
     commands:
       - mvn clean install
