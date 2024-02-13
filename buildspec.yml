@@ -3,19 +3,19 @@ version: 0.2
 phases:
   pre_build:
     commands:
-      - echo Logging in to Docker Hub
-      - echo $DOCKERHUB_PASSWORD | docker login -u $DOCKERHUB_USERNAME --password-stdin
 
+      - echo Logging in to DockerHub
+      - aws --version
+      - docker login -u bassam123 -p docker123@@
+      - REPOSITORY_URI=johnnie3000/csvfiltering:tagname
   build:
     commands:
-      - echo Running tests
-      - mvn test
+      - mvn clean install
       - echo Building Docker image
-      - mvn clean package
-      - docker build -t $REPOSITORY_URI:$IMAGE_TAG .
-      - echo Pushing Docker image
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - docker build -t johnnie3000/csvfiltering:tagname .
+      - docker push docker.io/johnnie3000/csvfiltering:tagname
+      - docker push $REPOSITORY_URI --all-tags
 
-post_build:
-  commands:
-    - echo Build and push completed on `date`
+  post_build:
+    commands:
+      - echo Build completed on `date`
