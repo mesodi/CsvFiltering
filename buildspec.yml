@@ -14,7 +14,7 @@ phases:
       - echo Building Docker image
       - docker build -t bassam123/csvfiltering:tagname .
       - docker push docker.io/bassam123/csvfiltering:tagname
-      - docker push $REPOSITORY_URI --all-tags
+      - docker push docker.io/bassam123/csvfiltering --all-tags
 
   post_build:
     commands:
