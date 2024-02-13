@@ -134,7 +134,7 @@
                 <p>Status: <span>${job.currentStatus}</span></p>
                 <button onclick="toggleDetails(this)">Show More</button>
                 <div class="filtered-data" style="display: none;">
-                    ${JSON.stringify(job.filteredData, null, 2)}
+                    ${formatPatentData(job.filteredData)}
                 </div>
             </div>
         `;
@@ -146,7 +146,33 @@
                 jobDetailsElement.textContent = 'Error processing the file.';
             });
     };
-    // Function to fetch all jobs and display them in the #jobDetails div
+
+    function formatPatentData(filteredData) {
+        // Assuming filteredData is an array of patent objects
+        return filteredData.map(patent => `
+        <div>
+            ${patent["Application Number"] ? `<span><strong>Application Number:</strong> ${patent["Application Number"]}</span>&emsp;&emsp;` : ''}
+            ${patent["Publication Date"] ? `<span><strong>Publication Date:</strong> ${patent["Publication Date"]}</span>&emsp;&emsp;` : ''}
+            ${patent["Applicants"] ? `<span><strong>Applicants:</strong> ${patent["Applicants"]}</span>` : ''}
+            <br/>
+            <strong>Title:</strong> ${patent["Title"] || 'N/A'}<br/>
+            <strong>Abstract:</strong><br/> ${patent["Abstract"] || 'N/A'}<br/>
+            <strong>Inventors:</strong> ${patent["Inventors"] ? patent["Inventors"].split(",").join(", ") : 'N/A'}
+            <br/><br/>
+        </div>
+    `).join('');
+    }
+
+    function toggleDetails(button) {
+        const filteredDataElement = button.nextElementSibling;
+        if (filteredDataElement.style.display === 'none') {
+            filteredDataElement.style.display = 'block';
+            button.textContent = 'Show Less';
+        } else {
+            filteredDataElement.style.display = 'none';
+            button.textContent = 'Show More';
+        }
+    }
     function fetchAndDisplayAllJobs() {
         fetch('/all')
             .then(response => response.json())
@@ -174,20 +200,8 @@
             });
     }
 
-    // Call fetchAndDisplayAllJobs on page load
     document.addEventListener('DOMContentLoaded', fetchAndDisplayAllJobs);
 
-    // Function to toggle the display of filtered data for each job
-    function toggleDetails(button) {
-        const filteredDataElement = button.nextElementSibling;
-        if (filteredDataElement.style.display === 'none') {
-            filteredDataElement.style.display = 'block';
-            button.textContent = 'Show Less';
-        } else {
-            filteredDataElement.style.display = 'none';
-            button.textContent = 'Show More';
-        }
-    }
 </script>
 </body>
 </html>
