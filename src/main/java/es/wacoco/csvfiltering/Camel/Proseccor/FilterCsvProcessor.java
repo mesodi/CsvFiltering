@@ -1,4 +1,4 @@
-package es.wacoco.csvfiltering.Camel.Proceccor;
+package es.wacoco.csvfiltering.Camel.Proseccor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;

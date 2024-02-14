@@ -1,8 +1,9 @@
 package es.wacoco.csvfiltering.Camel.Routes;
 
 
-import es.wacoco.csvfiltering.Camel.Proceccor.ApplicantExtractorProcessor;
-import es.wacoco.csvfiltering.Camel.Proceccor.FilterCsvProcessor;
+import es.wacoco.csvfiltering.Camel.Proseccor.ApplicantExtractorProcessor;
+import es.wacoco.csvfiltering.Camel.Proseccor.FilterCsvProcessor;
+import es.wacoco.csvfiltering.Camel.Proseccor.LinkedInUrlFinderProcessor;
 import es.wacoco.csvfiltering.model.Applicant;
 import es.wacoco.csvfiltering.model.Job;
 import es.wacoco.csvfiltering.service.JobService;
@@ -27,16 +28,18 @@ public class CsvProcessingRoute extends RouteBuilder {
     public void configure() {
         from("direct:processCsv")
                 .process(new ApplicantExtractorProcessor())
+                .process(new LinkedInUrlFinderProcessor())
 
                 .process(exchange -> {
                     LocalDateTime now = LocalDateTime.now();
                     String jobId = jobService.createJobID(now);
                     Job job = new Job(jobId, now, Job.Status.PROCESSING, new ArrayList<>());
                     jobService.newJob(job);
-
                     exchange.getIn().setHeader("jobId", jobId);
                 })
+
                 .process(new FilterCsvProcessor())
+
                 .process(exchange -> {
                     @SuppressWarnings("unchecked")
                     List<Applicant> applicants = exchange.getProperty("applicants", List.class);
@@ -53,7 +56,6 @@ public class CsvProcessingRoute extends RouteBuilder {
 
                         if (matchingApplicant != null && !matchingApplicant.getLinkedinUrl().isEmpty()) {
                             result.put("LinkedIn URL 1", matchingApplicant.getLinkedinUrl().get(0));
-
                             if (matchingApplicant.getLinkedinUrl().size() > 1) {
                                 result.put("LinkedIn URL 2", matchingApplicant.getLinkedinUrl().get(1));
                             }
@@ -61,18 +63,17 @@ public class CsvProcessingRoute extends RouteBuilder {
                     }
                     exchange.getIn().setBody(filteredResults);
                 })
+
                 .process(exchange -> {
-                    //get the id
                     String jobId = exchange.getIn().getHeader("jobId", String.class);
                     Job job = jobService.getJob(jobId);
                     @SuppressWarnings("unchecked")
                     List<Map<String, String>> filteredResults = exchange.getIn().getBody(List.class);
                     job.setFilteredData(filteredResults);
                     job.setCurrentStatus(Job.Status.DONE);
-
                     jobService.updateJob(job);
-                    exchange.getIn().setBody(job);
                 })
                 .to("log:filteredResults?showBody=true&showHeaders=true");
     }
+
 }
