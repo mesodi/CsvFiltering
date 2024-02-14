@@ -1,6 +1,7 @@
 package es.wacoco.csvfiltering.Camel.Routes;
 
 
+import es.wacoco.csvfiltering.Camel.Proceccor.ApplicantExtractorProcessor;
 import es.wacoco.csvfiltering.Camel.Proceccor.FilterCsvProcessor;
 import es.wacoco.csvfiltering.model.Job;
 import es.wacoco.csvfiltering.service.JobService;
@@ -24,6 +25,8 @@ public class CsvProcessingRoute extends RouteBuilder {
     @Override
     public void configure() {
         from("direct:processCsv")
+                .process(new ApplicantExtractorProcessor())
+
                 .process(exchange -> {
                     LocalDateTime now = LocalDateTime.now();
                     String jobId = jobService.createJobID(now);
