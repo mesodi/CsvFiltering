@@ -74,6 +74,28 @@
         button:hover {
             background-color: #45a049;
         }
+        .job-entry {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .job-entry span, .job-entry strong {
+            display: block; /* Make each span and strong occupy its own line */
+            margin-bottom: 5px; /* Add some space between each line */
+        }
+
+        .abstract {
+            font-style: italic; /* Italicize the abstract */
+            margin-left: 20px; /* Indent abstract for distinction */
+            white-space: pre-wrap; /* Ensure that the abstract maintains formatting */
+        }
+
+        .job-entry span strong {
+            font-weight: bold; /* Ensure labels are bold */
+        }
     </style>
 </head>
 <body>
@@ -91,6 +113,7 @@
             <input type="checkbox" id="title" name="fields" value="Title">
             <label for="title">Title</label>
         </div>
+
         <div class="filter-option">
             <input type="checkbox" id="publicationDate" name="fields" value="Publication Date">
             <label for="publicationDate">Publication Date</label>
@@ -134,7 +157,7 @@
                 <p>Status: <span>${job.currentStatus}</span></p>
                 <button onclick="toggleDetails(this)">Show More</button>
                 <div class="filtered-data" style="display: none;">
-                    ${JSON.stringify(job.filteredData, null, 2)}
+                    ${formatPatentData(job.filteredData)}
                 </div>
             </div>
         `;
@@ -146,7 +169,34 @@
                 jobDetailsElement.textContent = 'Error processing the file.';
             });
     };
-    // Function to fetch all jobs and display them in the #jobDetails div
+
+    function formatPatentData(filteredData) {
+        // Assuming filteredData is an array of patent objects
+        return filteredData.map(patent => `
+        <div>
+            ${patent["Application Number"] ? `<span><strong>Application Number:</strong> ${patent["Application Number"]}</span>&emsp;&emsp;` : ''}
+            ${patent["Publication Date"] ? `<span><strong>Publication Date:</strong> ${patent["Publication Date"]}</span>&emsp;&emsp;` : ''}
+            ${patent["Applicants"] ? `<span><strong>Applicants:</strong> ${patent["Applicants"]}</span>` : ''}
+            <br/>
+            <strong>Title:</strong> ${patent["Title"] || 'N/A'}<br/>
+            <strong>Abstract:</strong><br/> ${patent["Abstract"] || 'N/A'}<br/>
+            <strong>Inventors:</strong> ${patent["Inventors"] ? patent["Inventors"].split(",").join(", ") : 'N/A'}
+
+            <br/>  <hr>
+        </div>
+    `).join('');
+    }
+
+    function toggleDetails(button) {
+        const filteredDataElement = button.nextElementSibling;
+        if (filteredDataElement.style.display === 'none') {
+            filteredDataElement.style.display = 'block';
+            button.textContent = 'Show Less';
+        } else {
+            filteredDataElement.style.display = 'none';
+            button.textContent = 'Show More';
+        }
+    }
     function fetchAndDisplayAllJobs() {
         fetch('/all')
             .then(response => response.json())
@@ -174,20 +224,8 @@
             });
     }
 
-    // Call fetchAndDisplayAllJobs on page load
     document.addEventListener('DOMContentLoaded', fetchAndDisplayAllJobs);
 
-    // Function to toggle the display of filtered data for each job
-    function toggleDetails(button) {
-        const filteredDataElement = button.nextElementSibling;
-        if (filteredDataElement.style.display === 'none') {
-            filteredDataElement.style.display = 'block';
-            button.textContent = 'Show Less';
-        } else {
-            filteredDataElement.style.display = 'none';
-            button.textContent = 'Show More';
-        }
-    }
 </script>
 </body>
 </html>

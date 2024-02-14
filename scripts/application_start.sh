@@ -22,3 +22,4 @@ docker build -t johnnie3000/csvfiltering:tagname .
 
 docker run -d --name csvfiltering -p 80:8080 johnnie3000/csvfiltering:tagname
 
+
