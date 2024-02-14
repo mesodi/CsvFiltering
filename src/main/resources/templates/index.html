@@ -181,8 +181,9 @@
             <strong>Title:</strong> ${data["Title"] || 'N/A'}<br/>
             <strong>Abstract:</strong> ${data["Abstract"] || 'N/A'}<br/>
             <strong>Inventors:</strong> ${data["Inventors"] ? data["Inventors"].split(",").join(", ") : 'N/A'}
-            ${data["LinkedIn URL 1"] ? `<br/><a href="${data["LinkedIn URL 1"]}" target="_blank">${data["LinkedIn URL 1"]}</a>` : ''}
-            ${data["LinkedIn URL 2"] ? `<br/><a href="${data["LinkedIn URL 2"]}" target="_blank">${data["LinkedIn URL 2"]}</a>` : ''}
+           ${data["LinkedIn URL 1"] ? `<br/><a href="${data["LinkedIn URL 1"]}" target="_blank" rel="noopener noreferrer">${data["LinkedIn URL 1"]}</a>` : ''}
+            ${data["LinkedIn URL 2"] ? `<br/><a href="${data["LinkedIn URL 2"]}" target="_blank" rel="noopener noreferrer">${data["LinkedIn URL 2"]}</a>` : ''}
+
             <br/><hr>
         </div>
     `).join('');

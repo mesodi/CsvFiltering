@@ -8,7 +8,6 @@ import es.wacoco.csvfiltering.model.Applicant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -24,34 +23,44 @@ public class LinkedInUrlFinderProcessor implements Processor {
     private static final String CX = "Search Engine ID";
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public void process(Exchange exchange){
         @SuppressWarnings("unchecked")
         List<Applicant> applicants = exchange.getProperty("applicants", List.class);
 
+        log.info("Starting LinkedIn URL fetching for {} applicants.", applicants.size());
+
         for (Applicant applicant : applicants) {
-            List<String> linkedinUrls = fetchSearchResultUrls(applicant.getName() + " \"LinkedIn\"");
+            try {
+                List<String> linkedinUrls = fetchSearchResultUrls(applicant.getName() + " \"LinkedIn\"");
 
-            String companyUrl = null;
-            String nonCompanyUrl = null;
-            for (String url : linkedinUrls) {
-                if (url.contains("linkedin.com/company")) {
-                    if (companyUrl == null) companyUrl = url;
-                } else if (url.contains("linkedin.com/in") || url.contains("linkedin.com/pub")) {
-                    if (nonCompanyUrl == null) nonCompanyUrl = url;
+                String companyUrl = null;
+                String nonCompanyUrl = null;
+                for (String url : linkedinUrls) {
+                    if (url.contains("linkedin.com/company")) {
+                        if (companyUrl == null) companyUrl = url;
+                    } else if (url.contains("linkedin.com/in") || url.contains("linkedin.com/pub")) {
+                        if (nonCompanyUrl == null) nonCompanyUrl = url;
+                    }
                 }
-            }
 
-            if (nonCompanyUrl != null) {
-                applicant.addLinkedinUrl(nonCompanyUrl);
-            }
+                if (nonCompanyUrl != null) {
+                    applicant.addLinkedinUrl(nonCompanyUrl);
+                    log.info("Non-Company LinkedIn URL for {}: {}", applicant.getName(), nonCompanyUrl);
+                }
 
-            if (companyUrl != null) {
-                applicant.addLinkedinUrl(companyUrl);
+                if (companyUrl != null) {
+                    applicant.addLinkedinUrl(companyUrl);
+                    log.info("Company LinkedIn URL for {}: {}", applicant.getName(), companyUrl);
+                }
+
+            } catch (Exception e) {
+                log.error("Error fetching LinkedIn URLs for applicant {}: {}", applicant.getName(), e.getMessage(), e);
             }
         }
 
-        applicants.forEach(applicant -> log.info("Applicant: " + applicant.getName() + " - LinkedIn URLs: " + applicant.getLinkedinUrl()));
+        log.info("Completed LinkedIn URL fetching.");
     }
+
     private List<String> fetchSearchResultUrls(String query) throws Exception {
         List<String> urls = new ArrayList<>();
         String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
@@ -70,12 +79,16 @@ public class LinkedInUrlFinderProcessor implements Processor {
             JsonObject jsonObject = JsonParser.parseReader(in).getAsJsonObject();
             JsonArray items = jsonObject.getAsJsonArray("items");
 
-            for (JsonElement itemElement : items) {
-                JsonObject itemObject = itemElement.getAsJsonObject();
-                String link = itemObject.get("link").getAsString();
-                if (link.contains("linkedin.com")) {
-                    urls.add(link);
+            if (items != null) {
+                for (JsonElement itemElement : items) {
+                    JsonObject itemObject = itemElement.getAsJsonObject();
+                    String link = itemObject.get("link").getAsString();
+                    if (link.contains("linkedin.com")) {
+                        urls.add(link);
+                    }
                 }
+            } else {
+                log.warn("No LinkedIn URLs found for the query: {}", query);
             }
         }
         return urls;
