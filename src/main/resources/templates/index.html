@@ -74,6 +74,28 @@
         button:hover {
             background-color: #45a049;
         }
+        .job-entry {
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+        }
+
+        .job-entry span, .job-entry strong {
+            display: block; /* Make each span and strong occupy its own line */
+            margin-bottom: 5px; /* Add some space between each line */
+        }
+
+        .abstract {
+            font-style: italic; /* Italicize the abstract */
+            margin-left: 20px; /* Indent abstract for distinction */
+            white-space: pre-wrap; /* Ensure that the abstract maintains formatting */
+        }
+
+        .job-entry span strong {
+            font-weight: bold; /* Ensure labels are bold */
+        }
     </style>
 </head>
 <body>
@@ -91,6 +113,9 @@
             <input type="checkbox" id="title" name="fields" value="Title">
             <label for="title">Title</label>
         </div>
+
+
+
         <div class="filter-option">
             <input type="checkbox" id="publicationDate" name="fields" value="Publication Date">
             <label for="publicationDate">Publication Date</label>
@@ -158,7 +183,8 @@
             <strong>Title:</strong> ${patent["Title"] || 'N/A'}<br/>
             <strong>Abstract:</strong><br/> ${patent["Abstract"] || 'N/A'}<br/>
             <strong>Inventors:</strong> ${patent["Inventors"] ? patent["Inventors"].split(",").join(", ") : 'N/A'}
-            <br/><br/>
+
+            <br/>  <hr>
         </div>
     `).join('');
     }
