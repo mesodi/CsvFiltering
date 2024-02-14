@@ -171,21 +171,23 @@
     };
 
     function formatPatentData(filteredData) {
-        // Assuming filteredData is an array of patent objects
-        return filteredData.map(patent => `
+        // Assuming filteredData is an array of objects, including patent data and LinkedIn URLs
+        return filteredData.map(data => `
         <div>
-            ${patent["Application Number"] ? `<span><strong>Application Number:</strong> ${patent["Application Number"]}</span>&emsp;&emsp;` : ''}
-            ${patent["Publication Date"] ? `<span><strong>Publication Date:</strong> ${patent["Publication Date"]}</span>&emsp;&emsp;` : ''}
-            ${patent["Applicants"] ? `<span><strong>Applicants:</strong> ${patent["Applicants"]}</span>` : ''}
+            ${data["Application Number"] ? `<span><strong>Application Number:</strong> ${data["Application Number"]}</span>&emsp;&emsp;` : ''}
+            ${data["Publication Date"] ? `<span><strong>Publication Date:</strong> ${data["Publication Date"]}</span>&emsp;&emsp;` : ''}
+            ${data["Applicants"] ? `<span><strong>Applicants:</strong> ${data["Applicants"]}</span>` : ''}
             <br/>
-            <strong>Title:</strong> ${patent["Title"] || 'N/A'}<br/>
-            <strong>Abstract:</strong><br/> ${patent["Abstract"] || 'N/A'}<br/>
-            <strong>Inventors:</strong> ${patent["Inventors"] ? patent["Inventors"].split(",").join(", ") : 'N/A'}
-
-            <br/>  <hr>
+            <strong>Title:</strong> ${data["Title"] || 'N/A'}<br/>
+            <strong>Abstract:</strong> ${data["Abstract"] || 'N/A'}<br/>
+            <strong>Inventors:</strong> ${data["Inventors"] ? data["Inventors"].split(",").join(", ") : 'N/A'}
+            ${data["LinkedIn URL 1"] ? `<br/><a href="${data["LinkedIn URL 1"]}" target="_blank">${data["LinkedIn URL 1"]}</a>` : ''}
+            ${data["LinkedIn URL 2"] ? `<br/><a href="${data["LinkedIn URL 2"]}" target="_blank">${data["LinkedIn URL 2"]}</a>` : ''}
+            <br/><hr>
         </div>
     `).join('');
     }
+
 
     function toggleDetails(button) {
         const filteredDataElement = button.nextElementSibling;

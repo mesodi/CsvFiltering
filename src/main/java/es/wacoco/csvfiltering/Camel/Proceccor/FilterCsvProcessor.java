@@ -20,7 +20,7 @@ public class FilterCsvProcessor implements Processor {
         @SuppressWarnings("unchecked")
         List<String> userFields = exchange.getIn().getHeader("userFields", List.class);
 
-        List<Map<String, String>> filteredResults = null;
+        List<Map<String, String>> filteredResults;
         try {
             filteredResults = filterCsvFields(file, userFields);
         } catch (Exception e) {
