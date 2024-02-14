@@ -13,15 +13,14 @@ import java.util.List;
 @Setter
 public class Applicant {
     private String name;
-    private List<String> websiteUrls = new ArrayList<>();
+    private List<String> linkedinUrl = new ArrayList<>();
     public Applicant(String name) {
         this.name = name;
     }
 
-    public void addWebsiteUrl(String websiteUrl) {
-        this.websiteUrls.add(websiteUrl);
+    public void addLinkedinUrl(String linkedinUrl) {
+        this.linkedinUrl.add(linkedinUrl);
     }
-
     @Override
     public String toString() {
         return "Applicant{" +
