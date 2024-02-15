@@ -10,7 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class JobService {
-    private final Map<String, Job> jobs = new ConcurrentHashMap<>();
+    private final Map<String, Job> jobs = new ConcurrentHashMap<>(
+
+    );
 
     public String createJobID(LocalDateTime dateTime) {
         String formattedDate = dateTime.format(DateTimeFormatter.ofPattern("yyyyMMddHHmm"));

@@ -1,0 +1,121 @@
+/* Reset some default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body, html {
+    height: 100%;
+    font-family: 'Arial', sans-serif;
+}
+
+header {
+    background-color: #4CAF50; /* Green header background */
+    color: white;
+    padding: 10px 20px;
+    text-align: left;
+    font-size: 24px;
+}
+
+#main-container {
+    display: flex;
+    height: calc(100% - 50px); /* Adjust height as per header */
+    padding: 20px;
+}
+
+#upload-container {
+    flex: 1;
+    margin-right: 20px;
+}
+
+#jobs-section {
+    flex: 2;
+    background-color: #f2f2f2; /* Light grey background */
+    padding: 20px;
+    overflow-y: auto; /* Enable scroll if content is too long */
+}
+
+#upload-form {
+    border: 1px solid #ccc; /* Light grey border */
+    padding: 20px;
+    background-color: white;
+    border-radius: 4px;
+}
+
+#upload-form input[type="file"] {
+    border: 1px dashed #ccc; /* Dashed border for drag and drop */
+    padding: 10px;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+#upload-form p {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.filter-input-container {
+    margin-bottom: 20px;
+}
+
+.filter-input-container > div {
+    margin-bottom: 10px;
+}
+
+#filterOptions {
+    margin-bottom: 20px;
+}
+
+button {
+    background-color: #4CAF50; /* Green button background */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+#jobs-list {
+    margin-top: 20px;
+}
+
+/* Add any additional styling you need here */
+.job-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f7f7f7; /* Light grey background */
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    padding: 16px;
+    margin: 10px 0;
+    font-family: Arial, sans-serif; /* Assuming Arial is your font of choice */
+}
+
+.job-details p {
+    margin: 4px 0;
+    font-size: 14px;
+    color: #333; /* Dark grey text */
+}
+
+.view-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 15px;
+    background-color: #e0e0e0; /* Lighter grey for button */
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.3s; /* Smooth transition for hover effect */
+    font-size: 14px;
+}
+
+/* Add styles for hover effect on the button */
+.view-button:hover {
+    background-color: #d0d0d0; /* Slightly darker grey on hover */
+}
