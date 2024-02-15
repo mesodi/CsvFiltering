@@ -12,23 +12,43 @@
 </header>
 <div id="main-container">
     <aside id="upload-container">
+        <p><strong>Choose a file</strong> or drag it here</p>
         <form id="csvUploadForm" enctype="multipart/form-data">
             <input type="file" id="file" name="file" required>
-            <p><strong>Choose a file</strong> or drag it here</p>
-            <div class="filter-input-container" id="filterOptions">
-                <!-- Dynamically generated filter options will go here -->
-                
+            <div class="filter-container">
+                <div class="filter-option">
+                    <input type="checkbox" id="applicationNumber" name="fields" value="Application Number">
+                    <label for="applicationNumber">Application Number</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="title" name="fields" value="Title">
+                    <label for="title">Title</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="publicationDate" name="fields" value="Publication Date">
+                    <label for="publicationDate">Publication Date</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="abstract" name="fields" value="Abstract">
+                    <label for="abstract">Abstract</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="applicants" name="fields" value="Applicants">
+                    <label for="applicants">Applicants</label>
+                </div>
+                <div class="filter-option">
+                    <input type="checkbox" id="inventors" name="fields" value="Inventors">
+                    <label for="inventors">Inventors</label>
+                </div>
             </div>
-            <button type="submit" form="csvUploadForm">Create Job</button>
+            <button type="submit">Create Job</button>
         </form>
     </aside>
     <section id="jobs-section">
-        <button id="showAllJobsButton">Show All Jobs</button>
-        <div class="box2-job-card-container" id="jobDetails">
-            <!-- Dynamically added job cards will go here -->
-        </div>
+        <div id="jobDetails"></div>
     </section>
 </div>
+
 <script src="script.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-/* Reset some default styles */
+/* General Reset */
 * {
     margin: 0;
     padding: 0;
@@ -10,6 +10,7 @@ body, html {
     font-family: 'Arial', sans-serif;
 }
 
+/* Header styles */
 header {
     background-color: #4CAF50; /* Green header background */
     color: white;
@@ -18,104 +19,140 @@ header {
     font-size: 24px;
 }
 
+/* Main container styles for the two sections */
 #main-container {
     display: flex;
-    height: calc(100% - 50px); /* Adjust height as per header */
+    height: calc(100% - 50px); /* Adjust height considering the header */
     padding: 20px;
 }
 
+/* Upload container styles */
 #upload-container {
     flex: 1;
     margin-right: 20px;
-}
-
-#jobs-section {
-    flex: 2;
-    background-color: #f2f2f2; /* Light grey background */
+    background: #fff;
     padding: 20px;
-    overflow-y: auto; /* Enable scroll if content is too long */
-}
-
-#upload-form {
-    border: 1px solid #ccc; /* Light grey border */
-    padding: 20px;
-    background-color: white;
     border-radius: 4px;
 }
 
-#upload-form input[type="file"] {
-    border: 1px dashed #ccc; /* Dashed border for drag and drop */
-    padding: 10px;
+#upload-container h2 {
+    margin-bottom: 20px;
+}
+
+/* File input and filter container styles */
+#csvUploadForm input[type="file"] {
     width: 100%;
+    padding: 10px;
     margin-bottom: 20px;
 }
 
-#upload-form p {
-    text-align: center;
+.filter-container {
     margin-bottom: 20px;
 }
 
-.filter-input-container {
-    margin-bottom: 20px;
-}
-
-.filter-input-container > div {
+.filter-option {
     margin-bottom: 10px;
 }
 
-#filterOptions {
-    margin-bottom: 20px;
+.filter-option label {
+    cursor: pointer;
+    padding: 10px;
+    background: #f7f7f7;
+    display: block;
 }
 
-button {
-    background-color: #4CAF50; /* Green button background */
+.filter-option input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+/* Style for form submission button */
+#csvUploadForm button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
     color: white;
     border: none;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin: 4px 2px;
+    border-radius: 4px;
     cursor: pointer;
+    font-size: 16px;
+}
+
+#csvUploadForm button:hover {
+    background-color: #45a049;
+}
+
+/* Job details section styles */
+#jobs-section {
+    flex: 3; /* Jobs section takes up twice the space of upload-container */
+    padding: 20px;
+    overflow-y: auto; /* Scrollable area for jobs */
+    background: #f2f2f2; /* Different background for visual separation */
     border-radius: 4px;
 }
 
-#jobs-list {
-    margin-top: 20px;
+#jobDetails {
+    min-height: 300px; /* Give minimum height for empty state */
 }
 
-/* Add any additional styling you need here */
-.job-card {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #f7f7f7; /* Light grey background */
-    border-radius: 10px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-    padding: 16px;
-    margin: 10px 0;
-    font-family: Arial, sans-serif; /* Assuming Arial is your font of choice */
+/* Styles for job entries */
+.job-entry {
+    background: #fff;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.job-details p {
-    margin: 4px 0;
-    font-size: 14px;
-    color: #333; /* Dark grey text */
+.job-entry p {
+    margin: 5px 0;
+    color: #333;
 }
 
-.view-button {
-    padding: 8px 16px;
+.job-entry span {
+    font-weight: bold;
+}
+
+.job-entry button {
+    padding: 6px 12px;
+    background-color: #4CAF50;
+    color: white;
     border: none;
-    border-radius: 15px;
-    background-color: #e0e0e0; /* Lighter grey for button */
+    border-radius: 4px;
     cursor: pointer;
-    outline: none;
-    transition: background-color 0.3s; /* Smooth transition for hover effect */
-    font-size: 14px;
 }
 
-/* Add styles for hover effect on the button */
-.view-button:hover {
-    background-color: #d0d0d0; /* Slightly darker grey on hover */
+.job-entry button:hover {
+    background-color: #45a049;
+}
+.patent-data-container {
+    padding: 15px;
+    margin-bottom: 10px;
+    background-color: #f9f9f9;
+    border-radius: 4px;
+}
+
+.patent-data-container p {
+    margin: 10px 0;
+    line-height: 1.6;
+}
+
+.patent-data-container a {
+    color: #007bff;
+    text-decoration: none;
+}
+
+.patent-data-container a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    #main-container {
+        flex-direction: column;
+    }
+
+    #upload-container, #jobs-section {
+        margin-right: 0;
+        margin-bottom: 20px; /* Add space between the sections on small screens */
+    }
 }
