@@ -9,6 +9,9 @@ files:
     destination: /var/codedeploy/app
   - source: scripts
     destination: /var/codedeploy/app/scripts
+  - source: MainTests.java
+    destination: /var/codedeploy/app/test/java/es/wacoco/csvfiltering/
+    overwrite: true
 
 hooks:
   BeforeInstall:
@@ -28,5 +31,11 @@ hooks:
 
   ValidateService:
     - location: scripts/health_check.sh
+      timeout: 300
+      runas: ec2-user
+
+
+  Test:
+    - location: scripts/run_tests.sh
       timeout: 300
       runas: ec2-user
