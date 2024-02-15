@@ -42,31 +42,14 @@ document.getElementById('csvUploadForm').onsubmit = function(event) {
     })
     .then(response => response.json())
     .then(data => {
-        displayJobDetails(data); // Adjusted to handle the job object returned from the server
+        addJobToList(data); // Adjusted to add the job to the list
     })
     .catch(error => {
         console.error('Error:', error);
     });
 };
 
-document.getElementById('showAllJobsButton').addEventListener('click', showAllJobs);
-
-function showAllJobs() {
-    fetch('/all')
-    .then(response => response.json())
-    .then(jobs => {
-        const jobsListContainer = document.getElementById('jobDetails');
-        jobsListContainer.innerHTML = ''; // Clear existing jobs
-        jobs.forEach(job => {
-            displayJobDetails(job); // Use this function to create and append job cards
-        });
-    })
-    .catch(error => {
-        console.error('Error:', error);
-    });
-}
-
-function displayJobDetails(job) {
+function addJobToList(job) {
     const jobDetailsContainer = document.getElementById('jobDetails');
     const jobCard = document.createElement('div');
     jobCard.classList.add('job-card');
@@ -81,13 +64,29 @@ function displayJobDetails(job) {
     jobDetailsContainer.appendChild(jobCard);
 }
 
+document.getElementById('showAllJobsButton').addEventListener('click', showAllJobs);
+
+function showAllJobs() {
+    fetch('/all')
+    .then(response => response.json())
+    .then(jobs => {
+        const jobsListContainer = document.getElementById('jobDetails');
+        jobsListContainer.innerHTML = ''; // Clear existing jobs
+        jobs.forEach(job => {
+            addJobToList(job); // Use this function to create and append job cards
+        });
+    })
+    .catch(error => {
+        console.error('Error:', error);
+    });
+}
+
 window.viewJobDetails = function(jobID) {
-    // Example job details fetch logic
+    // Fetch job details and display logic here
+    // For demonstration, using static content
     const jobDetailsContainer = document.getElementById('jobDetails');
     jobDetailsContainer.innerHTML = ''; // Clear existing content
 
-    // Display job details logic here
-    // For demonstration, using static content
     const jobDetailsDiv = document.createElement('div');
     jobDetailsDiv.innerHTML = `<p>Details for Job ID: ${jobID}</p>`;
     jobDetailsContainer.appendChild(jobDetailsDiv);
