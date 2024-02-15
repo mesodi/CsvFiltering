@@ -2,230 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>CSV Upload and Filter</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-        }
-        .filter-container {
-            display: flex;
-            flex-direction: column;
-            margin-top: 20px;
-        }
-        .filter-option {
-            margin-bottom: 10px;
-        }
-        button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #45a049;
-        }
-        #jobDetails {
-            margin-top: 20px;
-        }
-        .job-entry {
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-        }
-
-        .job-entry p {
-            margin: 5px 0;
-            color: #333;
-        }
-
-        .job-entry span {
-            font-weight: bold;
-        }
-
-        .filtered-data {
-            background-color: #fff;
-            border: 1px solid #ccc;
-            padding: 10px;
-            margin-top: 10px;
-            border-radius: 5px;
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
-
-        button {
-            background-color: #4CAF50;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-        .job-entry {
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 5px;
-        }
-
-        .job-entry span, .job-entry strong {
-            display: block; /* Make each span and strong occupy its own line */
-            margin-bottom: 5px; /* Add some space between each line */
-        }
-
-        .abstract {
-            font-style: italic; /* Italicize the abstract */
-            margin-left: 20px; /* Indent abstract for distinction */
-            white-space: pre-wrap; /* Ensure that the abstract maintains formatting */
-        }
-
-        .job-entry span strong {
-            font-weight: bold; /* Ensure labels are bold */
-        }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Management Interface</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
 </head>
 <body>
-<h2>Upload and Filter CSV File</h2>
-<form id="csvUploadForm" enctype="multipart/form-data">
-    <input type="file" id="file" name="file" required><br><br>
-    <div class="filter-container">
-        <!-- Filter options based on your CSV fields -->
-        <!-- Updated field names according to your requirements -->
-        <div class="filter-option">
-            <input type="checkbox" id="applicationNumber" name="fields" value="Application Number">
-            <label for="applicationNumber">Application Number</label>
-        </div>
-        <div class="filter-option">
-            <input type="checkbox" id="title" name="fields" value="Title">
-            <label for="title">Title</label>
-        </div>
+<header>
+    <div id="logo">NOWLE</div>
+</header>
+<div id="main-container">
+    <aside id="upload-container">
+        <form id="csvUploadForm" enctype="multipart/form-data">
+            <input type="file" id="file" name="file" required>
+            <p><strong>Choose a file</strong> or drag it here</p>
+            <div class="filter-input-container" id="filterOptions">
+                <!-- Dynamically generated filter options will go here -->
 
-        <div class="filter-option">
-            <input type="checkbox" id="publicationDate" name="fields" value="Publication Date">
-            <label for="publicationDate">Publication Date</label>
-        </div>
-        <div class="filter-option">
-            <input type="checkbox" id="abstract" name="fields" value="Abstract">
-            <label for="abstract">Abstract</label>
-        </div>
-        <div class="filter-option">
-            <input type="checkbox" id="applicants" name="fields" value="Applicants">
-            <label for="applicants">Applicants</label>
-        </div>
-        <div class="filter-option">
-            <input type="checkbox" id="inventors" name="fields" value="Inventors">
-            <label for="inventors">Inventors</label>
-        </div>
-    </div>
-    <button type="submit">Upload and Filter</button>
-</form>
-
-<div id="jobDetails"></div> <!-- Container for job details -->
-
-<script>
-    document.getElementById('csvUploadForm').onsubmit = function(event) {
-        event.preventDefault();
-        const formData = new FormData(this);
-        const jobDetailsElement = document.getElementById('jobDetails');
-
-        fetch('/upload-csv', {
-            method: 'POST',
-            body: formData,
-        })
-            .then(response => response.json())
-            .then(job => {
-                // Create new job element
-                const jobElement = document.createElement('div');
-                jobElement.innerHTML = `
-            <div class="job-entry">
-                <p>Job ID: <span>${job.jobID}</span></p>
-                <p>Date Created: <span>${job.dateCreated}</span></p>
-                <p>Status: <span>${job.currentStatus}</span></p>
-                <button onclick="toggleDetails(this)">Show More</button>
-                <div class="filtered-data" style="display: none;">
-                    ${formatPatentData(job.filteredData)}
-                </div>
             </div>
-        `;
-                // Insert new job at the top
-                jobDetailsElement.insertBefore(jobElement, jobDetailsElement.firstChild);
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                jobDetailsElement.textContent = 'Error processing the file.';
-            });
-    };
-
-    function formatPatentData(filteredData) {
-        // Assuming filteredData is an array of patent objects
-        return filteredData.map(patent => `
-        <div>
-            ${patent["Application Number"] ? `<span><strong>Application Number:</strong> ${patent["Application Number"]}</span>&emsp;&emsp;` : ''}
-            ${patent["Publication Date"] ? `<span><strong>Publication Date:</strong> ${patent["Publication Date"]}</span>&emsp;&emsp;` : ''}
-            ${patent["Applicants"] ? `<span><strong>Applicants:</strong> ${patent["Applicants"]}</span>` : ''}
-            <br/>
-            <strong>Title:</strong> ${patent["Title"] || 'N/A'}<br/>
-            <strong>Abstract:</strong><br/> ${patent["Abstract"] || 'N/A'}<br/>
-            <strong>Inventors:</strong> ${patent["Inventors"] ? patent["Inventors"].split(",").join(", ") : 'N/A'}
-
-            <br/>  <hr>
+            <button type="submit" form="csvUploadForm">Create Job</button>
+        </form>
+    </aside>
+    <section id="jobs-section">
+        <button id="showAllJobsButton">Show All Jobs</button>
+        <div class="box2-job-card-container" id="jobDetails">
+            <!-- Dynamically added job cards will go here -->
         </div>
-    `).join('');
-    }
-
-    function toggleDetails(button) {
-        const filteredDataElement = button.nextElementSibling;
-        if (filteredDataElement.style.display === 'none') {
-            filteredDataElement.style.display = 'block';
-            button.textContent = 'Show Less';
-        } else {
-            filteredDataElement.style.display = 'none';
-            button.textContent = 'Show More';
-        }
-    }
-    function fetchAndDisplayAllJobs() {
-        fetch('/all')
-            .then(response => response.json())
-            .then(jobs => {
-                const jobDetailsElement = document.getElementById('jobDetails');
-                jobs.forEach(job => {
-                    const jobElement = document.createElement('div');
-                    jobElement.classList.add("job-entry"); // Ensure this class matches your CSS for styling
-                    jobElement.innerHTML = `
-                    <p>Job ID: <span>${job.jobID}</span></p>
-                    <p>Date Created: <span>${job.dateCreated}</span></p> <!-- Adjust according to your date formatting -->
-                    <p>Status: <span>${job.currentStatus}</span></p>
-                    <button onclick="toggleDetails(this)">Show More</button>
-                    <div class="filtered-data" style="display: none;">
-                        ${JSON.stringify(job.filteredData, null, 2)}
-                    </div>
-                `;
-                    // Append each job to the jobDetails container
-                    jobDetailsElement.appendChild(jobElement);
-                });
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                jobDetailsElement.textContent = 'Error fetching job details.';
-            });
-    }
-
-    document.addEventListener('DOMContentLoaded', fetchAndDisplayAllJobs);
-
-</script>
+    </section>
+</div>
+<script src="script.js"></script>
 </body>
 </html>
