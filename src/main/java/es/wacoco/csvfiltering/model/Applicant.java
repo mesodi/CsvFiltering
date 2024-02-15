@@ -14,6 +14,7 @@ import java.util.List;
 public class Applicant {
     private String name;
     private List<String> linkedinUrl = new ArrayList<>();
+    private List<String> websiteUrl = new ArrayList<>();
     public Applicant(String name) {
         this.name = name;
     }
@@ -26,5 +27,9 @@ public class Applicant {
         return "Applicant{" +
                 "name='" + name + '\'' +
                 '}';
+    }
+
+    public void addWebsiteUrl(String websiteUrl) {
+        this.websiteUrl.add(websiteUrl);
     }
 }

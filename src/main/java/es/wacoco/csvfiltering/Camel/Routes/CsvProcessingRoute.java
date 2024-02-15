@@ -4,6 +4,7 @@ package es.wacoco.csvfiltering.Camel.Routes;
 import es.wacoco.csvfiltering.Camel.Proseccor.ApplicantExtractorProcessor;
 import es.wacoco.csvfiltering.Camel.Proseccor.FilterCsvProcessor;
 import es.wacoco.csvfiltering.Camel.Proseccor.LinkedInUrlFinderProcessor;
+import es.wacoco.csvfiltering.Camel.Proseccor.WebsiteUrlFinderProcessor;
 import es.wacoco.csvfiltering.model.Applicant;
 import es.wacoco.csvfiltering.model.Job;
 import es.wacoco.csvfiltering.service.JobService;
@@ -27,9 +28,9 @@ public class CsvProcessingRoute extends RouteBuilder {
     @Override
     public void configure() {
         from("direct:processCsv")
-
                 .process(new ApplicantExtractorProcessor()) // Extract applicants
                 .process(new LinkedInUrlFinderProcessor()) // Find LinkedIn URLs
+                .process(new WebsiteUrlFinderProcessor()) // Find website URLs
 
                 .process(exchange -> {
                     LocalDateTime now = LocalDateTime.now();
@@ -54,11 +55,17 @@ public class CsvProcessingRoute extends RouteBuilder {
                                 .findFirst()
                                 .orElse(null);
 
-                        if (matchingApplicant != null && !matchingApplicant.getLinkedinUrl().isEmpty()) {
-                            result.put("LinkedIn URL 1", matchingApplicant.getLinkedinUrl().get(0));
+                        if (matchingApplicant != null) {
+                            if (!matchingApplicant.getLinkedinUrl().isEmpty()) {
+                                result.put("LinkedIn URL 1", matchingApplicant.getLinkedinUrl().get(0));
+                                if (matchingApplicant.getLinkedinUrl().size() > 1) {
+                                    result.put("LinkedIn URL 2", matchingApplicant.getLinkedinUrl().get(1));
+                                }
+                            }
 
-                            if (matchingApplicant.getLinkedinUrl().size() > 1) {
-                                result.put("LinkedIn URL 2", matchingApplicant.getLinkedinUrl().get(1));
+                            // Include Website URL
+                            if (!matchingApplicant.getWebsiteUrl().isEmpty()) {
+                                result.put("Website URL", matchingApplicant.getWebsiteUrl().get(0));
                             }
                         }
                     }
