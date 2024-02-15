@@ -1,24 +1,28 @@
 version: 0.0
 os: linux
 files:
-  - source: /src
-    destination: /tmp/codedeploy-deployment-staging-area/src
-  - source: /pom.xml
-    destination: /tmp/codedeploy-deployment-staging-area/
-  - source: /dockerfile
-    destination: /tmp/codedeploy-deployment-staging-area/
-  - source: /scripts
-    destination: /tmp/codedeploy-deployment-staging-area/scripts
+  - source: src
+    destination: /var/codedeploy/app
+  - source: pom.xml
+    destination: /var/codedeploy/app
+  - source: Dockerfile
+    destination: /var/codedeploy/app
+  - source: scripts
+    destination: /var/codedeploy/app/scripts
 hooks:
   BeforeInstall:
     - location: scripts/before_install.sh
-      runas: ec2-user
-  ApplicationStart:
-    - location: scripts/application_start.sh
+      timeout: 300
       runas: ec2-user
   AfterInstall:
     - location: scripts/after_install.sh
+      timeout: 300
       runas: ec2-user
-  HealthCheck:
+  ApplicationStart:
+    - location: scripts/application_start.sh
+      timeout: 300
+      runas: ec2-user
+  ValidateService:
     - location: scripts/health_check.sh
+      timeout: 300
       runas: ec2-user

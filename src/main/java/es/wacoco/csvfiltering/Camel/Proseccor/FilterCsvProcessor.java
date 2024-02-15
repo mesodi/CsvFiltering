@@ -1,4 +1,4 @@
-package es.wacoco.csvfiltering.Camel.Proceccor;
+package es.wacoco.csvfiltering.Camel.Proseccor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
@@ -20,7 +20,7 @@ public class FilterCsvProcessor implements Processor {
         @SuppressWarnings("unchecked")
         List<String> userFields = exchange.getIn().getHeader("userFields", List.class);
 
-        List<Map<String, String>> filteredResults = null;
+        List<Map<String, String>> filteredResults;
         try {
             filteredResults = filterCsvFields(file, userFields);
         } catch (Exception e) {
