@@ -31,7 +31,7 @@ public class LinkedInUrlFinderProcessor implements Processor {
 
         for (Applicant applicant : applicants) {
             try {
-                List<String> linkedinUrls = fetchSearchResultUrls(applicant.getName() + " \"LinkedIn\"");
+                List<String> linkedinUrls = fetchSearchResultUrls("site:linkedin.com " + applicant.getName());
 
                 String companyUrl = null;
                 String nonCompanyUrl = null;
