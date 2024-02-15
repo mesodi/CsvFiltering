@@ -8,10 +8,10 @@ import es.wacoco.csvfiltering.model.Applicant;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -61,20 +61,22 @@ public class LinkedInUrlFinderProcessor implements Processor {
         log.info("Completed LinkedIn URL fetching.");
     }
 
-    private List<String> fetchSearchResultUrls(String query) throws Exception {
+    private List<String> fetchSearchResultUrls(String query) {
         List<String> urls = new ArrayList<>();
         String encodedQuery = URLEncoder.encode(query, StandardCharsets.UTF_8);
         String urlString = "https://www.googleapis.com/customsearch/v1?key=" + API_KEY + "&cx=" + CX + "&q=" + encodedQuery;
 
-        URL url = new URL(urlString);
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.connect();
+        try {
+            URL url = new URL(urlString);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.connect();
 
-        int responseCode = conn.getResponseCode();
-        if (responseCode != 200) {
-            throw new RuntimeException("HttpResponseCode: " + responseCode);
-        } else {
+            int responseCode = conn.getResponseCode();
+            if (responseCode != 200) {
+                throw new RuntimeException("HttpResponseCode: " + responseCode);
+            }
+
             InputStreamReader in = new InputStreamReader(conn.getInputStream());
             JsonObject jsonObject = JsonParser.parseReader(in).getAsJsonObject();
             JsonArray items = jsonObject.getAsJsonArray("items");
@@ -90,6 +92,12 @@ public class LinkedInUrlFinderProcessor implements Processor {
             } else {
                 log.warn("No LinkedIn URLs found for the query: {}", query);
             }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Malformed URL: " + urlString, e);
+        } catch (IOException e) {
+            throw new RuntimeException("IO Exception during HTTP request to: " + urlString, e);
+        } catch (Exception e) {
+            throw new RuntimeException("Unexpected exception: " + e.getMessage(), e);
         }
         return urls;
     }
