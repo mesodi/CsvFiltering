@@ -15,6 +15,7 @@ public class Applicant {
     private String name;
     private List<String> linkedinUrl = new ArrayList<>();
     private List<String> websiteUrl = new ArrayList<>();
+    private List<String> emailAddress = new ArrayList<>();
     public Applicant(String name) {
         this.name = name;
     }
@@ -31,5 +32,9 @@ public class Applicant {
 
     public void addWebsiteUrl(String websiteUrl) {
         this.websiteUrl.add(websiteUrl);
+    }
+
+    public void addEmailAddress(String email) {
+        this.emailAddress.add(email);
     }
 }
