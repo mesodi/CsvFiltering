@@ -1,40 +1,24 @@
 version: 0.0
 os: linux
 files:
-  - source: src
-    destination: /var/codedeploy/app
-    overwrite: true
-  - source: pom.xml
-    destination: /var/codedeploy/app
-    overwrite: true
-  - source: Dockerfile
-    destination: /var/codedeploy/app
-    overwrite: true
-  - source: scripts
-    destination: /var/codedeploy/app/scripts
-    overwrite: true
-  - source: /
-    destination: /var/codedeploy/app
-    overwrite: true
-
+  - source: /src
+    destination: /tmp/codedeploy-deployment-staging-area/src
+  - source: /pom.xml
+    destination: /tmp/codedeploy-deployment-staging-area/
+  - source: /dockerfile
+    destination: /tmp/codedeploy-deployment-staging-area/
+  - source: /scripts
+    destination: /tmp/codedeploy-deployment-staging-area/scripts
 hooks:
   BeforeInstall:
     - location: scripts/before_install.sh
-      timeout: 300
-      runas: ec2-user
-  AfterInstall:
-    - location: scripts/after_install.sh
-      timeout: 300
       runas: ec2-user
   ApplicationStart:
     - location: scripts/application_start.sh
-      timeout: 300
       runas: ec2-user
-  ValidateService:
+  AfterInstall:
+    - location: scripts/after_install.sh
+      runas: ec2-user
+  HealthCheck:
     - location: scripts/health_check.sh
-      timeout: 300
-      runas: ec2-user
-  Test:
-    - location: scripts/run_tests.sh
-      timeout: 300
       runas: ec2-user
