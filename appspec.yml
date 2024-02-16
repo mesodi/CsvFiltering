@@ -3,14 +3,18 @@ os: linux
 files:
   - source: src
     destination: /var/codedeploy/app
+    overwrite: true
   - source: pom.xml
     destination: /var/codedeploy/app
+    overwrite: true
   - source: Dockerfile
     destination: /var/codedeploy/app
+    overwrite: true
   - source: scripts
     destination: /var/codedeploy/app/scripts
-  - source: MainTests.java
-    destination: /var/codedeploy/app/test/java/es/wacoco/csvfiltering/
+    overwrite: true
+  - source: /
+    destination: /var/codedeploy/app
     overwrite: true
 
 hooks:
@@ -18,23 +22,18 @@ hooks:
     - location: scripts/before_install.sh
       timeout: 300
       runas: ec2-user
-
   AfterInstall:
     - location: scripts/after_install.sh
       timeout: 300
       runas: ec2-user
-
   ApplicationStart:
     - location: scripts/application_start.sh
       timeout: 300
       runas: ec2-user
-
   ValidateService:
     - location: scripts/health_check.sh
       timeout: 300
       runas: ec2-user
-
-
   Test:
     - location: scripts/run_tests.sh
       timeout: 300
