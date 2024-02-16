@@ -1,10 +1,7 @@
 package es.wacoco.csvfiltering.Camel.Routes;
 
 
-import es.wacoco.csvfiltering.Camel.Proseccor.ApplicantExtractorProcessor;
-import es.wacoco.csvfiltering.Camel.Proseccor.FilterCsvProcessor;
-import es.wacoco.csvfiltering.Camel.Proseccor.LinkedInUrlFinderProcessor;
-import es.wacoco.csvfiltering.Camel.Proseccor.WebsiteUrlFinderProcessor;
+import es.wacoco.csvfiltering.Camel.Proseccor.*;
 import es.wacoco.csvfiltering.model.Applicant;
 import es.wacoco.csvfiltering.model.Job;
 import es.wacoco.csvfiltering.service.JobService;
@@ -31,7 +28,7 @@ public class CsvProcessingRoute extends RouteBuilder {
                 .process(new ApplicantExtractorProcessor()) // Extract applicants
                 .process(new LinkedInUrlFinderProcessor()) // Find LinkedIn URLs
                 .process(new WebsiteUrlFinderProcessor()) // Find website URLs
-
+                .process(new EmailExtractorProcessor()) // Extract emails from websites
                 .process(exchange -> {
                     LocalDateTime now = LocalDateTime.now();
                     String jobId = jobService.createJobID(now);
@@ -67,6 +64,11 @@ public class CsvProcessingRoute extends RouteBuilder {
                             if (!matchingApplicant.getWebsiteUrl().isEmpty()) {
                                 result.put("Website URL", matchingApplicant.getWebsiteUrl().get(0));
                             }
+                            // Include Email Address
+                            if (!matchingApplicant.getEmailAddress().isEmpty()) {
+                                result.put("Email Address", matchingApplicant.getEmailAddress().get(0));
+                            }
+
                         }
                     }
                     exchange.getIn().setBody(filteredResults);

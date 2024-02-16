@@ -44,6 +44,7 @@ function formatPatentData(filteredData) {
             ${data["LinkedIn URL 1"] ? `<p><strong>LinkedIn URL 1:</strong> <a href="${data["LinkedIn URL 1"]}" target="_blank" rel="noopener noreferrer">${data["LinkedIn URL 1"]}</a></p>` : ''}
             ${data["LinkedIn URL 2"] ? `<p><strong>LinkedIn URL 2:</strong> <a href="${data["LinkedIn URL 2"]}" target="_blank" rel="noopener noreferrer">${data["LinkedIn URL 2"]}</a></p>` : ''}
             ${data["Website URL"] ? `<p><strong>Website URL:</strong> <a href="${data["Website URL"]}" target="_blank" rel="noopener noreferrer">${data["Website URL"]}</a></p>` : ''}
+           <p><strong>Email Address:</strong> ${data["Email Address"] && data["Email Address"] !== '' ? `${data["Email Address"]}` : 'Email Not Found in the Website'}</p>
         </div>
         <hr>
     `).join('');
