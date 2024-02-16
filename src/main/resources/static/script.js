@@ -3,26 +3,41 @@ document.getElementById('csvUploadForm').onsubmit = function(event) {
     const formData = new FormData(this);
     const jobDetailsElement = document.getElementById('jobDetails');
 
+    // Create a temporary job entry to display immediately
+    const tempJobId = 'Processing-' + new Date().getTime(); // Generate a temporary unique ID
+    const tempJobElement = document.createElement('div');
+    tempJobElement.innerHTML = `
+        <div class="job-entry">
+            <p>Job ID: <span>${tempJobId}</span></p>
+            <p>Date Created: <span>${new Date().toLocaleString()}</span></p>
+            <p>Status: <span>PROCESSING</span></p>
+        </div>
+    `;
+    jobDetailsElement.insertBefore(tempJobElement, jobDetailsElement.firstChild);
+
+    // Submit the form data
     fetch('/upload-csv', {
         method: 'POST',
         body: formData,
     })
         .then(response => response.json())
         .then(job => {
-            // Create new job element
+            // Remove the temporary job entry
+            tempJobElement.remove();
+
+            // Create a new job entry with the actual data received from the backend
             const jobElement = document.createElement('div');
             jobElement.innerHTML = `
-        <div class="job-entry">
-            <p>Job ID: <span>${job.jobID}</span></p>
-            <p>Date Created: <span>${job.dateCreated}</span></p>
-            <p>Status: <span>${job.currentStatus}</span></p>
-            <button onclick="toggleDetails(this, '${job.jobID}')">View</button>
-            <div class="filtered-data" style="display: none;">
-                ${formatPatentData(job.filteredData)}
+            <div class="job-entry">
+                <p>Job ID: <span>${job.jobID}</span></p>
+                <p>Date Created: <span>${job.dateCreated}</span></p>
+                <p>Status: <span>${job.currentStatus}</span></p>
+                <button onclick="toggleDetails(this, '${job.jobID}')">View</button>
+                <div class="filtered-data" style="display: none;">
+                    ${formatPatentData(job.filteredData)}
+                </div>
             </div>
-        </div>
-    `;
-            // Insert new job at the top
+        `;
             jobDetailsElement.insertBefore(jobElement, jobDetailsElement.firstChild);
         })
         .catch(error => {
@@ -30,6 +45,7 @@ document.getElementById('csvUploadForm').onsubmit = function(event) {
             jobDetailsElement.textContent = 'Error processing the file.';
         });
 };
+
 
 function formatPatentData(filteredData) {
     return filteredData.map(data => `
@@ -41,7 +57,7 @@ function formatPatentData(filteredData) {
             <p><strong>Title:</strong> ${data["Title"] || 'N/A'}</p>
             <p><strong>Abstract:</strong> ${data["Abstract"] || 'N/A'}</p>
             <p><strong>Inventors:</strong> ${data["Inventors"] ? data["Inventors"].split(",").join(", ") : 'N/A'}</p>
-            ${data["LinkedIn URL 1"] ? `<p><strong>LinkedIn URL 1:</strong> <a href="${data["LinkedIn URL 1"]}" target="_blank" rel="noopener noreferrer">${data["LinkedIn URL 1"]}</a></p>` : ''}
+            ${data["LinkedIn URL 1"] ? `<p><strong>LinkedIn URL 1:</strong> <a href="${data["LinkedIn URL 1"]}" target="_blank" rel="noopener noreferrer">${data["LinkedIn URL 1"]}</a>a</p>` : ''}
             ${data["LinkedIn URL 2"] ? `<p><strong>LinkedIn URL 2:</strong> <a href="${data["LinkedIn URL 2"]}" target="_blank" rel="noopener noreferrer">${data["LinkedIn URL 2"]}</a></p>` : ''}
             ${data["Website URL"] ? `<p><strong>Website URL:</strong> <a href="${data["Website URL"]}" target="_blank" rel="noopener noreferrer">${data["Website URL"]}</a></p>` : ''}
            <p><strong>Email Address:</strong> ${data["Email Address"] && data["Email Address"] !== '' ? `${data["Email Address"]}` : 'Email Not Found in the Website'}</p>
