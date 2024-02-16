@@ -1,5 +1,9 @@
 version: 0.2
 
+env:
+  variables:
+    IMAGE_TAG:
+
 phases:
   pre_build:
     commands:
@@ -19,4 +23,3 @@ phases:
 post_build:
   commands:
     - echo Build and push completed on `date`
-
